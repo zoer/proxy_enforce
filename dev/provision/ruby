@@ -1,0 +1,8 @@
+#!/bin/bash
+
+RUBY_VERSION=2.2.0
+
+if ! su - vagrant -c "rbenv versions" | grep -q $RUBY_VERSION; then
+  su - vagrant -c "rbenv install $RUBY_VERSION && rbenv global $RUBY_VERSION"
+  su - vagrant -c "gem install bundler --no-ri --no-rdoc"
+fi

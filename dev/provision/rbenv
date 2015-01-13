@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# Verify Git is installed:
+if [ ! $(which git) ]; then
+  apt-get install -y git-core
+fi
+
+if [ -z "${RBENV_ROOT}" ]; then
+  RBENV_ROOT="/home/vagrant/.rbenv"
+fi
+
+# Install rbenv:
+if [ ! -d "$RBENV_ROOT" ] ; then
+  su - vagrant -c "git clone https://github.com/sstephenson/rbenv.git $RBENV_ROOT"
+else
+  cd $RBENV_ROOT
+  if [ ! -d '.git' ]; then
+    su - vagrant -c "cd $RBENV_ROOT && git init"
+    su - vagrant -c "cd $RBENV_ROOT && git remote add origin https://github.com/sstephenson/rbenv.git"
+  fi
+  su - vagrant -c "cd $RBENV_ROOT && git pull origin master"
+fi
+
+# Install plugins:
+PLUGINS=(
+  sstephenson/ruby-build
+)
+
+for plugin in ${PLUGINS[@]} ; do
+
+  KEY=${plugin%%/*}
+  VALUE=${plugin#*/}
+
+  RBENV_PLUGIN_ROOT="${RBENV_ROOT}/plugins/$VALUE"
+  if [ ! -d "$RBENV_PLUGIN_ROOT" ] ; then
+    su - vagrant -c "git clone https://github.com/$KEY/$VALUE.git $RBENV_PLUGIN_ROOT"
+  else
+    echo "Pulling $VALUE updates."
+    su - vagrant -c "cd $RBENV_PLUGIN_ROOT && git pull"
+  fi
+
+done
+
+if ! grep -q RBENV_ROOT /home/vagrant/.profile; then
+  echo "export RBENV_ROOT=\"${RBENV_ROOT}\"" >> /home/vagrant/.profile
+  echo "export PATH=\"\$RBENV_ROOT/bin:\$PATH\"" >> /home/vagrant/.profile
+  echo "eval \"\$(rbenv init -)\"" >> /home/vagrant/.profile
+  chown vagrant:vagrant /home/vagrant/.profile
+fi
