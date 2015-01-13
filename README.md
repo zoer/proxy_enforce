@@ -1,3 +1,7 @@
+# Proxy Enforce
+
+[![Build Status](https://travis-ci.org/zoer/proxy_enforce.svg)](https://travis-ci.org/zoer/proxy_enforce)
+
 ## Gem in active development and not ready for production yet.
 
 ## Installation
