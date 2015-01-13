@@ -39,6 +39,7 @@ module ProxyEnforce
         arr = @proxies
       end
 
+      full_cicle = false
       loop do
         arr.each_with_index do |proxy, i|
           #require "byebug"; byebug
@@ -46,7 +47,7 @@ module ProxyEnforce
             return @current_proxy = proxy
           end
         end
-        if defined? full_cicle
+        if full_cicle
           return nil
         else
           full_cicle = true
