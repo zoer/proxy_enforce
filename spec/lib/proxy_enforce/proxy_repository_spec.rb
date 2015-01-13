@@ -34,12 +34,13 @@ RSpec.describe ProxyEnforce::ProxyRepository do
     let(:registry) { ProxyEnforce::ProxyRegistry.instance }
 
     before(:each) do
+      registry.reset!
       expect(repository).to receive(:fetch) do
         repository.proxies = [args]
       end
     end
 
-    it do
+    it "pull repository with one proxy" do
       expect{repository.pull}.to change{registry.proxies.count}.by(1)
       expect(registry.proxies.first.eql?(proxy)).to be true
     end
